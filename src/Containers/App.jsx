@@ -1,43 +1,42 @@
-import React, {Component} from 'react';
+import React, { useState, useEffect} from 'react';
 import CardList from '../Components/CardList';
 import SearchBox from '../Components/SearchBox';
 import Scroll from '../Components/Scroll';
 import './App.css';
 import ErrorBoundary from '../Components/ErrorBoundary';
 
-class App extends Component  {
-    constructor(){
-        super()
-        this.state = {
-            robots: [],
-            searchfield: ""
-        }
-    }
+function App (){
 
-componentDidMount() {
+const [robots, setRobots] = useState([])
+const [searchfield, setSearchfield] = useState("")
+const [count, setCount] = useState(0) // Count isn't used in code other than to count
+
+useEffect(()=> {
     fetch('https://jsonplaceholder.typicode.com/users')
     .then(response=> response.json())
-    .then(users=> this.setState({robots: users }));}
+    .then(users=> {setRobots(users )});
+},[count])
 
-onSearchChange = (event) => {
-    this.setState({ searchfield: event.target.value })
+
+const onSearchChange = (event) => {
+    setSearchfield(event.target.value)
     }
 
-    render() {
-    const { robots, searchfield } = this.state;
-    const filteredRobots = robots.filter(robot =>{
-       return robot.name.toLowerCase().includes(searchfield.toLowerCase())
-    })
-    return( 
-    <div className="tc">
-        <h1 className="f1">RoboFriends</h1>
-        <SearchBox searchChange={this.onSearchChange}/>
-            <Scroll>
-                <ErrorBoundary>
-                <CardList robots={filteredRobots}/>
-                </ErrorBoundary>
-            </Scroll>
-    </div>);
-}}
+
+const filteredRobots = robots.filter(robot =>{
+    return robot.name.toLowerCase().includes(searchfield.toLowerCase())
+})
+return( 
+<div className="tc">
+    <h1 className="f1">RoboFriends</h1>
+    <button onClick={()=>setCount(count+1)}>Click me !!!</button>
+    <SearchBox searchChange={onSearchChange}/>
+        <Scroll>
+            <ErrorBoundary>
+            <CardList robots={filteredRobots}/>
+            </ErrorBoundary>
+        </Scroll>
+</div>);
+}
 
   export default App;
